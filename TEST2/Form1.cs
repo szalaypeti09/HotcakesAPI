@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting.Proxies;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Hotcakes.Commerce.Catalog;
@@ -37,37 +38,12 @@ namespace TEST2
 
                 if (selectedProduct != null)
                 {
-                    // Update the price of the selected product
                     textBox1.Text = selectedProduct.SitePrice.ToString();
-
-                    // Get new price from the TextBox
-                    //if (decimal.TryParse(txtNewPrice.Text, out decimal newPrice))
-                    //{
-                    //    selectedProduct.SitePrice = newPrice;
-
-                    //    var updateResult = proxy.ProductsUpdate(selectedProduct);
-
-                    //    if (updateResult.Errors.Count > 0)
-                    //    {
-                    //        // Handle any errors that occurred
-                    //        MessageBox.Show("Error updating product: " + updateResult.Errors[0].Description);
-                    //    }
-                    //    else
-                    //    {
-                    //        MessageBox.Show($"Price of {selectedProduct.ProductName} updated successfully to {selectedProduct.SitePrice}");
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("Invalid price entered");
-                    //}
                 }
             };
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
-
 
         }
 
@@ -75,33 +51,52 @@ namespace TEST2
         {
             var proxy = new Api("http://20.234.113.211:8083", "1-6bd2d3e3-d6ff-4d43-80de-4e1efab85207");
             var products = proxy.ProductsFindAll();
-            var selectedProduct = products.Content.FirstOrDefault(p => p.ProductName == lstProducts.SelectedItem.ToString());
-            if (decimal.TryParse(txtNewPrice.Text, out decimal newPrice) ) 
+
+            if (!string.IsNullOrWhiteSpace(txtNewPrice.Text))
             {
-                selectedProduct.SitePrice = newPrice;
 
-                var updateResult = proxy.ProductsUpdate(selectedProduct);
-
-                txtNewPrice.Text = "";
-
-                if (updateResult.Errors.Count > 0)
+                if (Regex.IsMatch(txtNewPrice.Text, @"^\d+(\.\d{1,2})?$"))
                 {
-                    // Handle any errors that occurred
-                    MessageBox.Show("Error updating product: " + updateResult.Errors[0].Description);
+                    if (decimal.TryParse(txtNewPrice.Text, out decimal newPrice))
+                    {
+                        var selectedProduct = products.Content.FirstOrDefault(p => p.ProductName == lstProducts.SelectedItem.ToString());
+                        selectedProduct.SitePrice = newPrice;
+
+                        var updateResult = proxy.ProductsUpdate(selectedProduct);
+
+                        txtNewPrice.Text = "";
+
+                        if (updateResult.Errors.Count > 0)
+                        {
+                            // Handle any errors that occurred
+                            MessageBox.Show("Error updating product: " + updateResult.Errors[0].Description);
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Price of {selectedProduct.ProductName} updated successfully to {selectedProduct.SitePrice} $");
+                            textBox1.Text = selectedProduct.SitePrice.ToString(); // Update the text box with the new price
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid price entered");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show($"Price of {selectedProduct.ProductName} updated successfully to {selectedProduct.SitePrice} $");
-                    textBox1.Text = selectedProduct.SitePrice.ToString(); // Update the text box with the new price
-                }
+                    MessageBox.Show("Invalid price format. Please enter a valid price (e.g. 25.99)");
+                }
             }
             else
             {
-                MessageBox.Show("Invalid price entered");
+                MessageBox.Show("Please enter a price before updating");
             }
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
-
-    
-
