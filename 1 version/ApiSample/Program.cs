@@ -1,29 +1,5 @@
-﻿#region License
-
-// Distributed under the MIT License
-// ============================================================
-// Copyright (c) 2019 Hotcakes Commerce, LLC
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
-// and associated documentation files (the "Software"), to deal in the Software without restriction, 
-// including without limitation the rights to use, copy, modify, merge, publish, distribute, 
-// sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is 
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or 
-// substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
-// THE SOFTWARE.
-
-#endregion
-
-using System;
+﻿using System;
+using System.Linq;
 using Hotcakes.CommerceDTO.v1.Client;
 
 namespace ApiSample
@@ -47,48 +23,43 @@ namespace ApiSample
                 }
             }
 
-            if (url == string.Empty) url = "http://20.234.113.211:8083/";
+            if (url == string.Empty) url = "http://20.234.113.211:8083";
             if (key == string.Empty) key = "1-6bd2d3e3-d6ff-4d43-80de-4e1efab85207";
 
             var proxy = new Api(url, key);
 
-            var snaps = proxy.CategoriesFindAll();
-            if (snaps.Content != null)
-            {
-                Console.WriteLine("Found " + snaps.Content.Count + " categories");
-                Console.WriteLine("-- First 5 --");
-                for (var i = 0; i < 5; i++)
-                {
-                    if (i < snaps.Content.Count)
-                    {
-                        Console.WriteLine(i + ") " + snaps.Content[i].Name + " [" + snaps.Content[i].Bvin + "]");
-                        var cat = proxy.CategoriesFind(snaps.Content[i].Bvin);
-                        if (cat.Errors.Count > 0)
-                        {
-                            foreach (var err in cat.Errors)
-                            {
-                                Console.WriteLine("ERROR: " + err.Code + " " + err.Description);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("By Bvin: " + cat.Content.Name + " | " + cat.Content.Description);
-                        }
+            // Retrieve a list of products
+            var products = proxy.ProductsFindAll();
 
-                        var catSlug = proxy.CategoriesFindBySlug(snaps.Content[i].RewriteUrl);
-                        if (catSlug.Errors.Count > 0)
-                        {
-                            foreach (var err in catSlug.Errors)
-                            {
-                                Console.WriteLine("ERROR: " + err.Code + " " + err.Description);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("By Slug: " + cat.Content.Name + " | " + cat.Content.Description);
-                        }
-                    }
+            // Find the product you want to update
+            Console.Write("Enter the Bvin of the product you want to update: ");
+            var bvin = Console.ReadLine();
+
+            var product = products.Content.ToList().FirstOrDefault(p => p.Bvin == bvin);
+
+            if (product != null)
+            {
+                // Update the price of the product
+                Console.WriteLine($"Current price of {product.ProductName}: {product.SitePrice}");
+                Console.Write($"Enter new price for {product.ProductName}: ");
+                double newPrice = Convert.ToDouble(Console.ReadLine());
+                product.SitePrice = Convert.ToDecimal(newPrice);
+
+                var updateResult = proxy.ProductsUpdate(product);
+
+                if (updateResult.Errors.Count > 0)
+                {
+                    // Handle any errors that occurred
+                    Console.WriteLine("Error updating product: " + updateResult.Errors[0].Description);
                 }
+                else
+                {
+                    Console.WriteLine($"Price of {product.ProductName} updated successfully to {product.SitePrice}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Product not found");
             }
 
             Console.WriteLine("Done - Press a key to continue");
