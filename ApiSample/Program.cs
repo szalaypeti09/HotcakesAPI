@@ -22,7 +22,7 @@ namespace ApiSample
                     key = args[1];
                 }
             }
-
+            
             if (url == string.Empty) url = "http://20.234.113.211:8083";
             if (key == string.Empty) key = "1-6bd2d3e3-d6ff-4d43-80de-4e1efab85207";
 
