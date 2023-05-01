@@ -74,17 +74,7 @@ namespace TEST2
                         else
                         {
                             MessageBox.Show($"Price of {selectedProduct.ProductName} updated successfully to {selectedProduct.SitePrice} $");
-                           textBox1.Text = selectedProduct.SitePrice.ToString(); // Update the text box with the new price
-                            //lstProducts.Items.Clear();
-                            //var proxy1 = new Api("http://20.234.113.211:8083", "1-6bd2d3e3-d6ff-4d43-80de-4e1efab85207");
-
-                            //var products1 = proxy1.ProductsFindAll();
-
-                            //foreach (var product in products1.Content)
-                            //{
-                            //    lstProducts.Items.Add(product.ProductName+ ' '+ product.SitePrice);
-                            //}
-
+                            textBox1.Text = selectedProduct.SitePrice.ToString(); // Update the text box with the new price
                         }
                     }
                     else
@@ -108,6 +98,5 @@ namespace TEST2
         {
 
         }
-        
     }
 }
