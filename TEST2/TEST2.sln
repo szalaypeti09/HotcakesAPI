@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TEST2", "TEST2.csproj", "{36CE13E1-DC79-490E-B990-18BB81714A92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API.csproj", "{36CE13E1-DC79-490E-B990-18BB81714A92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest_HCAPI", "..\UnitTest_HCAPI\UnitTest_HCAPI.csproj", "{8CEBE32B-4AF0-4B03-B6B7-604C7A2F972B}"
 EndProject

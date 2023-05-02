@@ -14,7 +14,7 @@ using Hotcakes.Commerce.Dnn.Prompt;
 using Hotcakes.CommerceDTO.v1.Client;
 //using Hotcakes.CommerceDTO.v1.Catalog;
 //using Hotcakes.CommerceDTO.v1.Contacts;
-
+//nekem ez mukodik - 
 
 namespace TEST2
 {
